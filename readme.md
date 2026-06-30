@@ -1,133 +1,42 @@
 # SmartPdf
 
-> Intelligent PDF understanding powered by an Agentic Retrieval-Augmented Generation (Agentic RAG) engine.
+> Turn every PDF into an interactive study companion.
 
-## Overview
+## Philosophy
 
-SmartPdf is an AI-powered platform for interacting with PDF documents using a multi-agent architecture. Instead of treating a document as plain text, SmartPdf extracts, indexes, retrieves, and reasons over document content through specialized AI agents that collaborate to deliver accurate, context-aware responses.
+Reading PDFs is often passive, overwhelming, and boring. SmartPdf transforms static documents into engaging learning experiences by helping you ask questions, understand concepts, test your knowledge, and stay motivated—all within a conversation.
 
-The platform is designed for research, education, technical documentation, legal documents, manuals, reports, and any knowledge-intensive workflow.
+Instead of reading page by page, you learn by interacting.
 
-The core engine is built around **Agentic RAG**, enabling intelligent retrieval, planning, reasoning, and response generation rather than a traditional single-step RAG pipeline.
+## Features
 
-## Core Features
+- 📄 Upload one or more PDFs
+- 💬 Chat naturally with your study materials
+- 🧠 Get simple explanations for difficult concepts
+- ❓ Generate quizzes from any topic
+- 📝 Summarize chapters and sections
+- 🎯 Identify important ideas and key takeaways
+- 📚 Remember previous conversations
+- 📈 Track your learning progress
 
-- 📄 PDF upload and processing
-- 🔍 Semantic document search
-- 🧠 Agentic RAG reasoning engine
-- 💬 Conversational document Q&A
-- 📑 Citation-aware responses
-- 📚 Multi-document knowledge base
-- 🖼️ OCR and image extraction support
-- 📊 Structured metadata extraction
-- ⚡ Streaming AI responses
-- 🔐 Secure document storage
+## How It Works
 
----
+1. Upload your PDF.
+2. SmartPdf understands and indexes the content.
+3. Ask questions in natural language.
+4. Receive accurate answers grounded in your documents.
+5. Learn through conversations, summaries, and quizzes instead of endless reading.
 
-# Agentic RAG Architecture
+## Core Engine
 
-Unlike conventional RAG systems, SmartPdf delegates responsibilities to specialized AI agents.
+SmartPdf is powered by an **Agentic RAG** engine.
 
+Rather than using a single AI prompt, specialized agents collaborate behind the scenes to retrieve relevant information, reason about your questions, and provide responses grounded in your study materials.
 
+The complexity stays hidden—you simply enjoy a smooth, interactive learning experience.
 
-Each agent performs a focused task while collaborating with the others to produce more reliable and explainable answers.
+## Vision
 
-## Planned Agents
+SmartPdf isn't another PDF reader.
 
-### Retriever Agent
-
-- Retrieves relevant document chunks
-- Performs semantic search
-- Ranks retrieved context
-
-### Planner Agent
-
-- Understands user intent
-- Breaks complex questions into sub-tasks
-- Coordinates execution flow
-
-### Reasoning Agent
-
-- Synthesizes retrieved knowledge
-- Performs multi-step reasoning
-- Reduces hallucinations
-
-### Memory Agent
-
-- Maintains conversation history
-- Tracks user context
-- Enables long-running interactions
-
-### Response Agent
-
-- Generates natural responses
-- Formats citations
-- Produces structured outputs
-
----
-
-# Tech Stack
-
-## Frontend
-
-- React
-- Next.js
-- TypeScript
-- Tailwind CSS
-
-## Backend
-
-- Node.js
-- Express
-- TypeScript
-
-## AI
-
-- OpenAI
-- Agentic RAG
-- Embedding Models
-
-## Database
-
-- PostgreSQL
-- pgvector
-
-## Storage
-
-- Object Storage (S3 compatible)
-
----
-
-# Roadmap
-
-- [ ] PDF upload
-- [ ] Text extraction
-- [ ] Chunking pipeline
-- [ ] Embedding generation
-- [ ] Vector search
-- [ ] Agent orchestration
-- [ ] Conversation memory
-- [ ] Citation engine
-- [ ] Multi-document chat
-- [ ] Authentication
-- [ ] Team workspaces
-- [ ] API
-
----
-
-# Vision
-
-SmartPdf aims to become an intelligent knowledge workspace where users don't simply search documents—they collaborate with AI agents capable of understanding, retrieving, reasoning, and explaining information across complex PDFs.
-
-By leveraging Agentic RAG, SmartPdf moves beyond traditional retrieval systems to provide deeper, more accurate, and context-aware document intelligence.
-
----
-
-## Inspiration
-
-The multi-agent architecture is inspired by recent advances in AI agent systems and research into coordinated agent workflows for intelligent knowledge processing. The overall approach aligns with modern multi-agent AI designs for personalized learning and reasoning systems. :contentReference[oaicite:0]{index=0} :contentReference[oaicite:1]{index=1}
-
-## License
-
-MIT
+It's a study companion that helps you understand, remember, and engage with your learning materials, making studying feel like a conversation instead of a chore.
