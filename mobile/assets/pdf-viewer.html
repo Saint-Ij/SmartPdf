@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+<title>PDF Viewer</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #525659;
+  -webkit-user-select: text;
+  user-select: text;
+}
+#viewer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 0;
+  min-height: 100vh;
+}
+.page-container {
+  margin: 4px auto;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  background: white;
+  position: relative;
+}
+.page-container canvas { display: block; }
+.text-layer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  opacity: 0.25;
+  line-height: 1.0;
+  color: transparent;
+  pointer-events: none;
+}
+.text-layer span, .text-layer br {
+  color: transparent;
+  pointer-events: none;
+}
+.selection-highlight {
+  position: absolute;
+  background: rgba(0, 122, 255, 0.15);
+  pointer-events: none;
+}
+#loading {
+  color: white;
+  text-align: center;
+  padding: 40px;
+  font-size: 16px;
+}
+</style>
+</head>
+<body>
+<div id="loading">Loading PDF...</div>
+<div id="viewer"></div>
+
+<script>
+let pdfDoc = null;
+let currentSelection = '';
+let isProcessingSelection = false;
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+async function renderPage(pageNum) {
+  const page = await pdfDoc.getPage(pageNum);
+  const viewport = page.getViewport({ scale: window.devicePixelRatio || 1.5 });
+
+  const container = document.createElement('div');
+  container.className = 'page-container';
+  container.style.width = viewport.width + 'px';
+  container.style.height = viewport.height + 'px';
+  container.dataset.page = pageNum;
+
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = viewport.width;
+  canvas.height = viewport.height;
+  container.appendChild(canvas);
+
+  await page.render({ canvasContext: ctx, viewport }).promise;
+
+  const textContent = await page.getTextContent();
+  const textLayer = document.createElement('div');
+  textLayer.className = 'text-layer';
+  textLayer.style.width = viewport.width + 'px';
+  textLayer.style.height = viewport.height + 'px';
+  container.appendChild(textLayer);
+
+  const textItems = textContent.items;
+  for (const item of textItems) {
+    if (!item.str || !item.transform) continue;
+    const span = document.createElement('span');
+    span.textContent = item.str;
+    span.style.position = 'absolute';
+    span.style.left = (item.transform[4] * (window.devicePixelRatio || 1.5)) + 'px';
+    span.style.top = (item.transform[5] * (window.devicePixelRatio || 1.5)) + 'px';
+    span.style.fontSize = ((item.height || 12) * (window.devicePixelRatio || 1.5)) + 'px';
+    span.style.fontFamily = item.fontName || 'sans-serif';
+    span.style.transform = 'scaleY(-1)';
+    span.style.transformOrigin = 'left top';
+    textLayer.appendChild(span);
+  }
+
+  document.getElementById('viewer').appendChild(container);
+}
+
+async function loadPdf(data) {
+  try {
+    const loadingTask = pdfjsLib.getDocument({ data });
+    pdfDoc = await loadingTask.promise;
+    document.getElementById('loading').style.display = 'none';
+
+    for (let i = 1; i <= pdfDoc.numPages; i++) {
+      await renderPage(i);
+    }
+
+    document.addEventListener('selectionchange', () => {
+      if (isProcessingSelection) return;
+      const selection = window.getSelection();
+      const text = selection ? selection.toString().trim() : '';
+      if (text && text.length > 3) {
+        currentSelection = text;
+        window.ReactNativeWebView.postMessage(JSON.stringify({
+          type: 'textSelected',
+          text: text
+        }));
+      }
+    });
+  } catch (err) {
+    document.getElementById('loading').textContent = 'Error loading PDF: ' + err.message;
+  }
+}
+
+window.addEventListener('message', function(e) {
+  try {
+    const msg = JSON.parse(e.data);
+    if (msg.type === 'loadPdf' && msg.data) {
+      const binaryStr = atob(msg.data);
+      const bytes = new Uint8Array(binaryStr.length);
+      for (let i = 0; i < binaryStr.length; i++) {
+        bytes[i] = binaryStr.charCodeAt(i);
+      }
+      loadPdf(bytes.buffer);
+    }
+  } catch(err) {
+    console.error('Message error:', err);
+  }
+});
+
+document.addEventListener('touchstart', function() {
+  isProcessingSelection = false;
+}, { passive: true });
+</script>
+</body>
+</html>
